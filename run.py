@@ -28,26 +28,22 @@ class Player(pygame.sprite.Sprite):
     def go_left(self):
         for i in range(len(yellow_fields)):
             if yellow_fields[i].x == self.x - 60 and yellow_fields[i].y == self.y:
-                self.x -= 60
-                self.draw(gm.STAND_L)
+                return True
 
     def go_right(self):
         for i in range(len(yellow_fields)):
             if yellow_fields[i].x == self.x + 60 and yellow_fields[i].y == self.y:
-                self.x += 60
-                self.draw(gm.STAND_R)
+                return True
 
     def go_up(self):
         for i in range(len(yellow_fields)):
             if yellow_fields[i].x == self.x and yellow_fields[i].y == self.y - 60:
-                self.y -= 60
-                self.draw(gm.STAND_U)
+                return True
 
     def go_down(self):
         for i in range(len(yellow_fields)):
             if yellow_fields[i].x == self.x and yellow_fields[i].y == self.y + 60:
-                self.y += 60
-                self.draw(gm.STAND_D)
+                return True
 
    # def move(self):
         # for coordinates in yellow_fields:
@@ -223,14 +219,18 @@ def redraw_game_window():
     if keys[pygame.K_ESCAPE]:
         run = False
 
-    if keys[pygame.K_LEFT]:
-        ghost.go_left()
-    if keys[pygame.K_RIGHT]:
-        ghost.go_right()
-    if keys[pygame.K_UP]:
-        ghost.go_up()
-    if keys[pygame.K_DOWN]:
-        ghost.go_down()
+    if keys[pygame.K_LEFT] and ghost.go_left():
+        ghost.x -= 60
+        ghost.draw(gm.STAND_L)
+    if keys[pygame.K_RIGHT] and ghost.go_right():
+        ghost.x += 60
+        ghost.draw(gm.STAND_R)
+    if keys[pygame.K_UP]  and ghost.go_up():
+        ghost.y -= 60
+        ghost.draw(gm.STAND_U)
+    if keys[pygame.K_DOWN] and ghost.go_down():
+        ghost.y += 60
+        ghost.draw(gm.STAND_D)
     pygame.display.update()
 
 
