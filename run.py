@@ -15,6 +15,45 @@ fields = [[], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []
 yellow_fields = []
 
 
+class Player(pygame.sprite.Sprite):
+    def __init__(self, x, y, image, *groups):
+        super().__init__(*groups)
+        self.x = x
+        self.y = y
+        self.image = image
+
+    def draw(self, image):
+        win.blit(image, (self.x, self.y))
+
+    def go_left(self):
+        for i in range(len(yellow_fields)):
+            if yellow_fields[i].x == self.x - 60 and yellow_fields[i].y == self.y:
+                self.x -= 60
+                self.draw(gm.STAND_L)
+
+    def go_right(self):
+        for i in range(len(yellow_fields)):
+            if yellow_fields[i].x == self.x + 60 and yellow_fields[i].y == self.y:
+                self.x += 60
+                self.draw(gm.STAND_R)
+
+    def go_up(self):
+        for i in range(len(yellow_fields)):
+            if yellow_fields[i].x == self.x and yellow_fields[i].y == self.y - 60:
+                self.y -= 60
+                self.draw(gm.STAND_U)
+
+    def go_down(self):
+        for i in range(len(yellow_fields)):
+            if yellow_fields[i].x == self.x and yellow_fields[i].y == self.y + 60:
+                self.y += 60
+                self.draw(gm.STAND_D)
+
+   # def move(self):
+        # for coordinates in yellow_fields:
+            # if [self.x, self.y] in yellow_fields:
+
+
 class Field(pygame.sprite.Sprite):
     def __init__(self, x, y):
         super().__init__()
@@ -179,11 +218,29 @@ def redraw_game_window():
     win.blit(gm.bg, (0, 0))
     draw_final_fields()
     draw_yellow_fields()
+    ghost.draw(gm.STAND_U)
+    keys = pygame.key.get_pressed()
+    if keys[pygame.K_ESCAPE]:
+        run = False
+
+    if keys[pygame.K_LEFT]:
+        ghost.go_left()
+    if keys[pygame.K_RIGHT]:
+        ghost.go_right()
+    if keys[pygame.K_UP]:
+        ghost.go_up()
+    if keys[pygame.K_DOWN]:
+        ghost.go_down()
     pygame.display.update()
 
 
 add_rocks_to_field_list()
 set_lvl_1_fields()
+ghost = Player(fields[16][8].get_x(), fields[16][8].get_y(), gm.STAND_U)
+
+for i in range(len(yellow_fields)):
+    if yellow_fields[i].x == 1310 and yellow_fields[i].y == 620:
+        print(True)
 
 
 while run:
@@ -191,10 +248,5 @@ while run:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             run = False
-
-    keys = pygame.key.get_pressed()
-
-    if keys[pygame.K_ESCAPE]:
-        run = False
     redraw_game_window()
 pygame.quit()
