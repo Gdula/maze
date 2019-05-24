@@ -25,22 +25,22 @@ class Player(pygame.sprite.Sprite):
     def draw(self, image):
         win.blit(image, (self.x, self.y))
 
-    def go_left(self):
+    def can_go_left(self):
         for i in range(len(yellow_fields)):
             if yellow_fields[i].x == self.x - 60 and yellow_fields[i].y == self.y:
                 return True
 
-    def go_right(self):
+    def can_go_right(self):
         for i in range(len(yellow_fields)):
             if yellow_fields[i].x == self.x + 60 and yellow_fields[i].y == self.y:
                 return True
 
-    def go_up(self):
+    def can_go_up(self):
         for i in range(len(yellow_fields)):
             if yellow_fields[i].x == self.x and yellow_fields[i].y == self.y - 60:
                 return True
 
-    def go_down(self):
+    def can_go_down(self):
         for i in range(len(yellow_fields)):
             if yellow_fields[i].x == self.x and yellow_fields[i].y == self.y + 60:
                 return True
@@ -219,16 +219,16 @@ def redraw_game_window():
     if keys[pygame.K_ESCAPE]:
         run = False
 
-    if keys[pygame.K_LEFT] and ghost.go_left():
+    if keys[pygame.K_LEFT] and ghost.can_go_left():
         ghost.x -= 60
         ghost.draw(gm.STAND_L)
-    if keys[pygame.K_RIGHT] and ghost.go_right():
+    if keys[pygame.K_RIGHT] and ghost.can_go_right():
         ghost.x += 60
         ghost.draw(gm.STAND_R)
-    if keys[pygame.K_UP]  and ghost.go_up():
+    if keys[pygame.K_UP]  and ghost.can_go_up():
         ghost.y -= 60
         ghost.draw(gm.STAND_U)
-    if keys[pygame.K_DOWN] and ghost.go_down():
+    if keys[pygame.K_DOWN] and ghost.can_go_down():
         ghost.y += 60
         ghost.draw(gm.STAND_D)
     pygame.display.update()
@@ -248,5 +248,5 @@ while run:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             run = False
-    redraw_game_window()
+        redraw_game_window()
 pygame.quit()
