@@ -2,6 +2,7 @@ import pygame
 import os
 import game_module as gm
 from pygame.locals import RESIZABLE
+from collections import defaultdict
 
 os.environ['SDL_VIDEO_CENTERED'] = '1'
 pygame.init()
@@ -13,6 +14,8 @@ run = True
 
 fields = [[], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []]
 yellow_fields = []
+neighbors = defaultdict(list)
+visited_yellow_fields = []
 
 
 class Player(pygame.sprite.Sprite):
@@ -23,7 +26,7 @@ class Player(pygame.sprite.Sprite):
         self.image = image
 
     def draw(self, image):
-        win.blit(image, (self.x, self.y))
+        win.blit(image, (self.x + 7, self.y + 10))
 
     def can_go_left(self):
         for i in range(len(yellow_fields)):
@@ -45,10 +48,6 @@ class Player(pygame.sprite.Sprite):
             if yellow_fields[i].x == self.x and yellow_fields[i].y == self.y + 60:
                 return True
 
-   # def move(self):
-        # for coordinates in yellow_fields:
-            # if [self.x, self.y] in yellow_fields:
-
 
 class Field(pygame.sprite.Sprite):
     def __init__(self, x, y):
@@ -56,12 +55,6 @@ class Field(pygame.sprite.Sprite):
         self.x = x
         self.y = y
         self.image = gm.ROCK_FIELD
-
-    def get_x(self):
-        return self.x
-
-    def get_y(self):
-        return self.y
 
     def get_image(self):
         return self.image
@@ -79,12 +72,17 @@ class YellowField(Field):
     def get_visible(self):
         return self.visible
 
+    def find_neighbors(self, yellow_fields):
+        reversed_list = yellow_fields[::-1]
+        for element in reversed_list:
+            if self.x == element.x and self.y - 60 == element.y or self.x - 60 == element.x and self.y == element.y or self.x + 60 == element.x and self.y == element or self.x - 60 == element.x and self.y - 60 == element.y:
+                neighbors[self].append(element)
 
 def draw_final_fields():
     # wyświetlanie fieldow z listy
     for i in range(18):
         for j in range(10):
-            win.blit(fields[i][j].get_image(), (fields[i][j].get_x(), fields[i][j].get_y()))
+            win.blit(fields[i][j].get_image(), (fields[i][j].x, fields[i][j].y))
 
 
 def add_rocks_to_field_list():
@@ -142,72 +140,72 @@ def set_lvl_1_fields():
     fields[17][8].set_image(gm.BLACK_FIELD)
     fields[17][9].set_image(gm.BLACK_FIELD)
 
-    yellow_fields.append(YellowField(fields[0][1].get_x(), fields[0][1].get_y(), True))
-    yellow_fields.append(YellowField(fields[1][1].get_x(), fields[1][1].get_y(), True))
-    yellow_fields.append(YellowField(fields[2][1].get_x(), fields[2][1].get_y(), True))
-    yellow_fields.append(YellowField(fields[3][1].get_x(), fields[3][1].get_y(), True))
-    yellow_fields.append(YellowField(fields[3][2].get_x(), fields[3][2].get_y(), True))
-    yellow_fields.append(YellowField(fields[3][3].get_x(), fields[3][3].get_y(), True))
-    yellow_fields.append(YellowField(fields[3][5].get_x(), fields[3][5].get_y(), True))
-    yellow_fields.append(YellowField(fields[3][7].get_x(), fields[3][7].get_y(), True))
-    yellow_fields.append(YellowField(fields[4][3].get_x(), fields[4][3].get_y(), True))
-    yellow_fields.append(YellowField(fields[4][5].get_x(), fields[4][5].get_y(), True))
-    yellow_fields.append(YellowField(fields[4][7].get_x(), fields[4][7].get_y(), True))
-    yellow_fields.append(YellowField(fields[4][8].get_x(), fields[4][8].get_y(), True))
-    yellow_fields.append(YellowField(fields[5][1].get_x(), fields[5][1].get_y(), True))
-    yellow_fields.append(YellowField(fields[5][2].get_x(), fields[5][2].get_y(), True))
-    yellow_fields.append(YellowField(fields[5][3].get_x(), fields[5][3].get_y(), True))
-    yellow_fields.append(YellowField(fields[5][4].get_x(), fields[5][4].get_y(), True))
-    yellow_fields.append(YellowField(fields[5][5].get_x(), fields[5][5].get_y(), True))
-    yellow_fields.append(YellowField(fields[5][7].get_x(), fields[5][7].get_y(), True))
-    yellow_fields.append(YellowField(fields[6][2].get_x(), fields[6][2].get_y(), True))
-    yellow_fields.append(YellowField(fields[6][5].get_x(), fields[6][5].get_y(), True))
-    yellow_fields.append(YellowField(fields[6][7].get_x(), fields[6][7].get_y(), True))
-    yellow_fields.append(YellowField(fields[7][2].get_x(), fields[7][2].get_y(), True))
-    yellow_fields.append(YellowField(fields[7][5].get_x(), fields[7][5].get_y(), True))
-    yellow_fields.append(YellowField(fields[7][7].get_x(), fields[7][7].get_y(), True))
-    yellow_fields.append(YellowField(fields[8][2].get_x(), fields[8][2].get_y(), True))
-    yellow_fields.append(YellowField(fields[8][5].get_x(), fields[8][5].get_y(), True))
-    yellow_fields.append(YellowField(fields[8][7].get_x(), fields[8][7].get_y(), True))
-    yellow_fields.append(YellowField(fields[8][8].get_x(), fields[8][8].get_y(), True))
-    yellow_fields.append(YellowField(fields[9][1].get_x(), fields[9][1].get_y(), True))
-    yellow_fields.append(YellowField(fields[9][2].get_x(), fields[9][2].get_y(), True))
-    yellow_fields.append(YellowField(fields[9][3].get_x(), fields[9][3].get_y(), True))
-    yellow_fields.append(YellowField(fields[9][5].get_x(), fields[9][5].get_y(), True))
-    yellow_fields.append(YellowField(fields[9][7].get_x(), fields[9][7].get_y(), True))
-    yellow_fields.append(YellowField(fields[10][1].get_x(), fields[10][1].get_y(), True))
-    yellow_fields.append(YellowField(fields[10][3].get_x(), fields[10][3].get_y(), True))
-    yellow_fields.append(YellowField(fields[10][5].get_x(), fields[10][5].get_y(), True))
-    yellow_fields.append(YellowField(fields[10][6].get_x(), fields[10][6].get_y(), True))
-    yellow_fields.append(YellowField(fields[10][7].get_x(), fields[10][7].get_y(), True))
-    yellow_fields.append(YellowField(fields[11][1].get_x(), fields[11][1].get_y(), True))
-    yellow_fields.append(YellowField(fields[12][1].get_x(), fields[12][1].get_y(), True))
-    yellow_fields.append(YellowField(fields[12][2].get_x(), fields[12][2].get_y(), True))
-    yellow_fields.append(YellowField(fields[12][3].get_x(), fields[12][3].get_y(), True))
-    yellow_fields.append(YellowField(fields[12][4].get_x(), fields[12][4].get_y(), True))
-    yellow_fields.append(YellowField(fields[12][5].get_x(), fields[12][5].get_y(), True))
-    yellow_fields.append(YellowField(fields[12][6].get_x(), fields[12][6].get_y(), True))
-    yellow_fields.append(YellowField(fields[13][3].get_x(), fields[13][3].get_y(), True))
-    yellow_fields.append(YellowField(fields[13][5].get_x(), fields[13][5].get_y(), True))
-    yellow_fields.append(YellowField(fields[14][1].get_x(), fields[14][1].get_y(), True))
-    yellow_fields.append(YellowField(fields[14][3].get_x(), fields[14][3].get_y(), True))
-    yellow_fields.append(YellowField(fields[14][5].get_x(), fields[14][5].get_y(), True))
-    yellow_fields.append(YellowField(fields[15][1].get_x(), fields[15][1].get_y(), True))
-    yellow_fields.append(YellowField(fields[15][3].get_x(), fields[15][3].get_y(), True))
-    yellow_fields.append(YellowField(fields[15][5].get_x(), fields[15][5].get_y(), True))
-    yellow_fields.append(YellowField(fields[15][6].get_x(), fields[15][6].get_y(), True))
-    yellow_fields.append(YellowField(fields[16][1].get_x(), fields[16][1].get_y(), True))
-    yellow_fields.append(YellowField(fields[16][2].get_x(), fields[16][2].get_y(), True))
-    yellow_fields.append(YellowField(fields[16][3].get_x(), fields[16][3].get_y(), True))
-    yellow_fields.append(YellowField(fields[16][6].get_x(), fields[16][6].get_y(), True))
-    yellow_fields.append(YellowField(fields[16][7].get_x(), fields[16][7].get_y(), True))
-    yellow_fields.append(YellowField(fields[16][8].get_x(), fields[16][8].get_y(), True))
+    yellow_fields.append(YellowField(fields[0][1].x, fields[0][1].y, True))
+    yellow_fields.append(YellowField(fields[1][1].x, fields[1][1].y, True))
+    yellow_fields.append(YellowField(fields[2][1].x, fields[2][1].y, True))
+    yellow_fields.append(YellowField(fields[3][1].x, fields[3][1].y, True))
+    yellow_fields.append(YellowField(fields[3][2].x, fields[3][2].y, True))
+    yellow_fields.append(YellowField(fields[3][3].x, fields[3][3].y, True))
+    yellow_fields.append(YellowField(fields[3][5].x, fields[3][5].y, True))
+    yellow_fields.append(YellowField(fields[3][7].x, fields[3][7].y, True))
+    yellow_fields.append(YellowField(fields[4][3].x, fields[4][3].y, True))
+    yellow_fields.append(YellowField(fields[4][5].x, fields[4][5].y, True))
+    yellow_fields.append(YellowField(fields[4][7].x, fields[4][7].y, True))
+    yellow_fields.append(YellowField(fields[4][8].x, fields[4][8].y, True))
+    yellow_fields.append(YellowField(fields[5][1].x, fields[5][1].y, True))
+    yellow_fields.append(YellowField(fields[5][2].x, fields[5][2].y, True))
+    yellow_fields.append(YellowField(fields[5][3].x, fields[5][3].y, True))
+    yellow_fields.append(YellowField(fields[5][4].x, fields[5][4].y, True))
+    yellow_fields.append(YellowField(fields[5][5].x, fields[5][5].y, True))
+    yellow_fields.append(YellowField(fields[5][7].x, fields[5][7].y, True))
+    yellow_fields.append(YellowField(fields[6][2].x, fields[6][2].y, True))
+    yellow_fields.append(YellowField(fields[6][5].x, fields[6][5].y, True))
+    yellow_fields.append(YellowField(fields[6][7].x, fields[6][7].y, True))
+    yellow_fields.append(YellowField(fields[7][2].x, fields[7][2].y, True))
+    yellow_fields.append(YellowField(fields[7][5].x, fields[7][5].y, True))
+    yellow_fields.append(YellowField(fields[7][7].x, fields[7][7].y, True))
+    yellow_fields.append(YellowField(fields[8][2].x, fields[8][2].y, True))
+    yellow_fields.append(YellowField(fields[8][5].x, fields[8][5].y, True))
+    yellow_fields.append(YellowField(fields[8][7].x, fields[8][7].y, True))
+    yellow_fields.append(YellowField(fields[8][8].x, fields[8][8].y, True))
+    yellow_fields.append(YellowField(fields[9][1].x, fields[9][1].y, True))
+    yellow_fields.append(YellowField(fields[9][2].x, fields[9][2].y, True))
+    yellow_fields.append(YellowField(fields[9][3].x, fields[9][3].y, True))
+    yellow_fields.append(YellowField(fields[9][5].x, fields[9][5].y, True))
+    yellow_fields.append(YellowField(fields[9][7].x, fields[9][7].y, True))
+    yellow_fields.append(YellowField(fields[10][1].x, fields[10][1].y, True))
+    yellow_fields.append(YellowField(fields[10][3].x, fields[10][3].y, True))
+    yellow_fields.append(YellowField(fields[10][5].x, fields[10][5].y, True))
+    yellow_fields.append(YellowField(fields[10][6].x, fields[10][6].y, True))
+    yellow_fields.append(YellowField(fields[10][7].x, fields[10][7].y, True))
+    yellow_fields.append(YellowField(fields[11][1].x, fields[11][1].y, True))
+    yellow_fields.append(YellowField(fields[12][1].x, fields[12][1].y, True))
+    yellow_fields.append(YellowField(fields[12][2].x, fields[12][2].y, True))
+    yellow_fields.append(YellowField(fields[12][3].x, fields[12][3].y, True))
+    yellow_fields.append(YellowField(fields[12][4].x, fields[12][4].y, True))
+    yellow_fields.append(YellowField(fields[12][5].x, fields[12][5].y, True))
+    yellow_fields.append(YellowField(fields[12][6].x, fields[12][6].y, True))
+    yellow_fields.append(YellowField(fields[13][3].x, fields[13][3].y, True))
+    yellow_fields.append(YellowField(fields[13][5].x, fields[13][5].y, True))
+    yellow_fields.append(YellowField(fields[14][1].x, fields[14][1].y, True))
+    yellow_fields.append(YellowField(fields[14][3].x, fields[14][3].y, True))
+    yellow_fields.append(YellowField(fields[14][5].x, fields[14][5].y, True))
+    yellow_fields.append(YellowField(fields[15][1].x, fields[15][1].y, True))
+    yellow_fields.append(YellowField(fields[15][3].x, fields[15][3].y, True))
+    yellow_fields.append(YellowField(fields[15][5].x, fields[15][5].y, True))
+    yellow_fields.append(YellowField(fields[15][6].x, fields[15][6].y, True))
+    yellow_fields.append(YellowField(fields[16][1].x, fields[16][1].y, True))
+    yellow_fields.append(YellowField(fields[16][2].x, fields[16][2].y, True))
+    yellow_fields.append(YellowField(fields[16][3].x, fields[16][3].y, True))
+    yellow_fields.append(YellowField(fields[16][6].x, fields[16][6].y, True))
+    yellow_fields.append(YellowField(fields[16][7].x, fields[16][7].y, True))
+    yellow_fields.append(YellowField(fields[16][8].x, fields[16][8].y, True))
 
 
 def draw_yellow_fields():
     for field in yellow_fields:
         if field.get_visible():
-            win.blit(field.get_image(), (field.get_x(), field.get_y()))
+            win.blit(field.get_image(), (field.x, field.y))
 
 
 def redraw_game_window():
@@ -225,7 +223,7 @@ def redraw_game_window():
     if keys[pygame.K_RIGHT] and ghost.can_go_right():
         ghost.x += 60
         ghost.draw(gm.STAND_R)
-    if keys[pygame.K_UP]  and ghost.can_go_up():
+    if keys[pygame.K_UP] and ghost.can_go_up():
         ghost.y -= 60
         ghost.draw(gm.STAND_U)
     if keys[pygame.K_DOWN] and ghost.can_go_down():
@@ -236,11 +234,12 @@ def redraw_game_window():
 
 add_rocks_to_field_list()
 set_lvl_1_fields()
-ghost = Player(fields[16][8].get_x(), fields[16][8].get_y(), gm.STAND_U)
+ghost = Player(fields[16][8].x, fields[16][8].y, gm.STAND_U)
 
-for i in range(len(yellow_fields)):
-    if yellow_fields[i].x == 1310 and yellow_fields[i].y == 620:
-        print(True)
+# finding neighbors
+for field in yellow_fields:
+    field.find_neighbors(yellow_fields)
+
 
 
 while run:
