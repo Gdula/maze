@@ -15,7 +15,8 @@ run = True
 fields = [[], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []]
 yellow_fields = []
 neighbors = defaultdict(list)
-visited_yellow_fields = []
+visited = []
+path = []
 
 
 class Player(pygame.sprite.Sprite):
@@ -208,6 +209,23 @@ def draw_yellow_fields():
             win.blit(field.get_image(), (field.x, field.y))
 
 
+def dfs_findpath(start,end,graph):
+  path.append(start)
+  visited.append(start)
+  return dfs_findpath_(start,end,graph)
+
+def dfs_findpath_(start, end, graph):
+    for node in graph[path[len(path) - 1]]:
+        if node not in visited:
+            visited.append(node)
+        else:
+            continue
+        path.append(node)
+        if node == end:
+            return path
+        return dfs_findpath_(start, end, graph)
+
+
 def redraw_game_window():
     win.blit(gm.bg, (0, 0))
     draw_final_fields()
@@ -240,8 +258,20 @@ ghost = Player(fields[16][8].x, fields[16][8].y, gm.STAND_U)
 for field in yellow_fields:
     field.find_neighbors(yellow_fields)
 
+#for el in yellow_fields:
+    #print(el.__dict__)
+
+for key, value in neighbors.items():
+    print('key{', key.x,',', key.y, '}')
+    for elem in value:
+        print('value{', elem.x, ',', elem.y, '}')
 
 
+#start = YellowField(410, 260, True)
+#end = YellowField(530, 260, True)
+
+#print(dfs_findpath(start, end, neighbors))
+#print(path)
 while run:
     clock.tick(27)
     for event in pygame.event.get():
