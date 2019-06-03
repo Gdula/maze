@@ -5,6 +5,7 @@ import os
 
 # Tło
 bg = pygame.image.load(os.path.join('png', 'maze.png'))
+win = pygame.image.load(os.path.join('png', 'you_win.png'))
 
 # Grafika Postaci
 STAND_R = pygame.image.load(os.path.join('png', 'player_1.png'))

@@ -10,6 +10,10 @@ win = pygame.display.set_mode(gm.SIZESCREEN, RESIZABLE)
 pygame.display.set_caption("Maze")
 clock = pygame.time.Clock()
 
+pygame.mixer.init()
+music = pygame.mixer.music.load(os.path.join('sound', 'bg.wav'))
+pygame.mixer.music.play(-1)
+
 run = True
 
 fields = [[], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []]
@@ -72,6 +76,14 @@ class Player(pygame.sprite.Sprite):
         elif self.facing == "RIGHT":
             ghost.draw(gm.STAND_R)
 
+    def check_win(self):
+        if self.x == end.x and self.y == end.y:
+            win.blit(gm.win, (0, 0))
+            pygame.mixer.music.stop()
+            music = pygame.mixer.music.load(os.path.join('sound', 'win.wav'))
+            pygame.mixer.music.play(-1)
+
+
 
 class Field(pygame.sprite.Sprite):
     def __init__(self, x, y):
@@ -108,7 +120,6 @@ class YellowField(Field):
         return self.visible
 
     def find_neighbors(self, yellow_fields):
-        # reversed_list = yellow_fields[::-1]
         for element in yellow_fields:
             if self.x == element.x and self.y - 60 == element.y or self.x == element.x and self.y + 60 == element.y or self.x - 60 == element.x and self.y == element.y or self.x + 60 == element.x and self.y == element.y:
                 neighbors[self].append(element)
@@ -268,7 +279,6 @@ def dfs_findpath_(node, end, _path):
 
 
 def redraw_game_window():
-    
     win.blit(gm.bg, (0, 0))
     draw_final_fields()
     draw_yellow_fields()
@@ -297,6 +307,7 @@ def redraw_game_window():
         ghost.x = start.x
         ghost.y = start.y
     ghost.check_facing()
+    ghost.check_win()
     pygame.display.update()
 
 
@@ -311,6 +322,7 @@ for field in yellow_fields:
 start = YellowField(1310, 680)
 end = YellowField(350, 260)
 dfs_findpath(start, end)
+
 
 
 while run:
