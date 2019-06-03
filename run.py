@@ -70,13 +70,24 @@ class YellowField(Field):
         self.visible = visible
         self.image = gm.YELLOW_FIELD
 
+    def __eq__(self, other):
+        if isinstance(other, Field):
+            return self.x == other.x and self.y == other.y
+        return False
+
+    def __hash__(self):
+        return hash(super)
+
+    def __repr__(self):
+        return "(" + str(self.x) + "," + str(self.y) + ")"
+
     def get_visible(self):
         return self.visible
 
     def find_neighbors(self, yellow_fields):
-        reversed_list = yellow_fields[::-1]
-        for element in reversed_list:
-            if self.x == element.x and self.y - 60 == element.y or self.x - 60 == element.x and self.y == element.y or self.x + 60 == element.x and self.y == element or self.x - 60 == element.x and self.y - 60 == element.y:
+        # reversed_list = yellow_fields[::-1]
+        for element in yellow_fields:
+            if self.x == element.x and self.y - 60 == element.y or self.x == element.x and self.y + 60 == element.y or self.x - 60 == element.x and self.y == element.y or self.x + 60 == element.x and self.y == element.y:
                 neighbors[self].append(element)
 
 def draw_final_fields():
@@ -209,21 +220,28 @@ def draw_yellow_fields():
             win.blit(field.get_image(), (field.x, field.y))
 
 
-def dfs_findpath(start,end,graph):
-  path.append(start)
-  visited.append(start)
-  return dfs_findpath_(start,end,graph)
+def dfs_findpath(start, end):
+    _path = []
+    return dfs_findpath_(start, end, _path)
 
-def dfs_findpath_(start, end, graph):
-    for node in graph[path[len(path) - 1]]:
-        if node not in visited:
-            visited.append(node)
-        else:
-            continue
-        path.append(node)
-        if node == end:
-            return path
-        return dfs_findpath_(start, end, graph)
+
+def dfs_findpath_(node, end, _path):
+    global path
+    visited.append(node)
+    _path.append(node)
+
+    if node == end:
+        path = _path.copy()
+        return
+    else:
+        node_neighbors = neighbors.get(node)
+        if node_neighbors is not None:
+            for _node in node_neighbors:
+                if _node not in visited:
+                    dfs_findpath_(_node, end, _path)
+
+    visited.remove(node)
+    _path.remove(node)
 
 
 def redraw_game_window():
@@ -258,20 +276,18 @@ ghost = Player(fields[16][8].x, fields[16][8].y, gm.STAND_U)
 for field in yellow_fields:
     field.find_neighbors(yellow_fields)
 
-#for el in yellow_fields:
-    #print(el.__dict__)
+for el in yellow_fields:
+    print(el.__dict__)
 
 for key, value in neighbors.items():
-    print('key{', key.x,',', key.y, '}')
+    print('key{', key.x, ',', key.y, '}')
     for elem in value:
         print('value{', elem.x, ',', elem.y, '}')
+start = YellowField(1310, 680, True)
+end = YellowField(350, 260, True)
+dfs_findpath(start, end)
+print(path)
 
-
-#start = YellowField(410, 260, True)
-#end = YellowField(530, 260, True)
-
-#print(dfs_findpath(start, end, neighbors))
-#print(path)
 while run:
     clock.tick(27)
     for event in pygame.event.get():
