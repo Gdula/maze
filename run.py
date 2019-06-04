@@ -84,7 +84,6 @@ class Player(pygame.sprite.Sprite):
             pygame.mixer.music.play(-1)
 
 
-
 class Field(pygame.sprite.Sprite):
     def __init__(self, x, y):
         super().__init__()
@@ -314,13 +313,15 @@ def redraw_game_window():
 add_rocks_to_field_list()
 set_lvl_1_fields()
 ghost = Player(fields[16][8].x, fields[16][8].y, gm.STAND_U)
+ghost.x = 350
+ghost.y = 260
 
 # finding neighbors
 for field in yellow_fields:
     field.find_neighbors(yellow_fields)
 
-start = YellowField(1310, 680)
-end = YellowField(350, 260)
+start = YellowField(350, 260)
+end = YellowField(1310, 680)
 dfs_findpath(start, end)
 
 
